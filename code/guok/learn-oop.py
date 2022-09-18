@@ -73,28 +73,56 @@
 #     else:
 #         print('测试成功!')
 
-class Animal(object):
-    def run(self):
-        print("Animal is running...")
-        return None
-    def eat(self):
-        print("Animal is eating...")
+# class Animal(object):
+#     def run(self):
+#         print("Animal is running...")
+#         return None
+#     def eat(self):
+#         print("Animal is eating...")
+# 
+# class Dog(Animal):
+#     def run(self):
+#         print("Dog is running...")
+#         return None
+# 
+# class Cat(Animal):
+#     def run(self):
+#         print("Cat is running...")
+#         return None
+# 
+# 
+# 
+# dog = Dog()
+# dog.run()
+# 
+# cat = Cat()
+# cat.run()
+# 
+# def run_twice(animal: Animal):
+#     animal.run()
+#     return None
+# 
+# class AA(object):
+#     def run(self):
+#         print("time is running...")
+#         return None
+# 
+# 
+# run_twice(Animal())
+# run_twice(Dog())
+# run_twice(Cat())
+# run_twice(AA())
 
-class Dog(Animal):
-    def run(self):
-        print("Dog is running...")
-        return None
+print(type(33))
+print(type(32.5) == float)
 
-class Cat(Animal):
-    def run(self):
-        print("Dog is running...")
-        return None
+import types
 
+def fn():
+    pass
 
+print(type(fn))
 
-dog = Dog()
-dog.run()
-
-cat = Cat()
-cat.run()
-
+print(type(fn) == types.FunctionType)
+print(type(lambda x : x + x) == types.LambdaType)
+print(type(abs) == types.BuiltinFunctionType)
