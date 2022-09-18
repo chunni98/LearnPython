@@ -113,16 +113,43 @@
 # run_twice(Cat())
 # run_twice(AA())
 
-print(type(33))
-print(type(32.5) == float)
+# print(type(33))
+# print(type(32.5) == float)
+# 
+# import types
+# 
+# def fn():
+#     pass
+# 
+# print(type(fn))
+# 
+# print(type(fn) == types.FunctionType)
+# print(type(lambda x : x + x) == types.LambdaType)
+# print(type(abs) == types.BuiltinFunctionType)
+# print(dir("ABC"))
 
-import types
+# class MyObject(object):
+#     def __init__(self, attr1: int, attr2: str):
+#         self.attr1 = attr1
+#         self.attr2 = attr2
+#         return None
+#     
+#     def power(self) -> int:
+#         return self.attr1 * int(self.attr2)
+# 
+# obj = MyObject(1,"2")
+# print(hasattr(obj, "attr1")) # True
+# setattr(obj, "attr3", 9)
+# print(getattr(obj, "attr3")) # 9
+# print(getattr(obj, "attr4", 404))
 
-def fn():
-    pass
+class Student(object):
+    number = 0
+    def __init__(self, name):
+        self.__name = name
+        Student.number += 1
+        return None
 
-print(type(fn))
-
-print(type(fn) == types.FunctionType)
-print(type(lambda x : x + x) == types.LambdaType)
-print(type(abs) == types.BuiltinFunctionType)
+s1 = Student("chunni")
+s2 = Student("dora")
+print(Student.number)

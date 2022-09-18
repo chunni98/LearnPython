@@ -6,6 +6,7 @@
   - [4.1 Python 中的继承和多态](#41-python-中的继承和多态)
   - [4.2 静态语言和动态语言](#42-静态语言和动态语言)
 - [5 获取对象信息](#5-获取对象信息)
+- [6 实例属性和类属性](#6-实例属性和类属性)
 
 
 ## 1 概述
@@ -188,4 +189,112 @@ print(type(fn))
 print(type(fn) == types.FunctionType)            
 print(type(lambda x : x + x) == types.LambdaType)
 print(type(abs) == types.BuiltinFunctionType)    
+```
+
+**isinstance()**
+
+isinstance()判断的是一个对象是否是该类型本身，或者位于该类型的父继承链上。
+
+能用type()判断的基本类型也可以用isinstance()判断。
+
+并且还可以判断一个变量是否是某些类型中的一种，比如下面的代码就可以判断是否是list或者tuple：
+
+```python
+>>>isinstance([1, 2, 3], (list, tuple))
+True
+```
+
+**dir()**
+
+如果要获得一个对象的所有属性和方法，可以使用dir()函数，它返回一个包含字符串的list，比如，获得一个str对象的所有属性和方法：
+
+```python
+>>>dir('ABC')
+['__add__', '__class__',..., '__subclasshook__', 'capitalize', 'casefold',..., 'zfill']
+```
+
+类似__xxx__的属性和方法在Python中都是有特殊用途的，比如__len__方法返回长度。
+
+我们自己写的类，如果也想用len(myObj)的话，就自己写一个__len__()方法：
+
+```python
+>>> class MyDog(object):
+...     def __len__(self):
+...         return 100
+...
+>>> dog = MyDog()
+>>> len(dog)
+100
+```
+
+配合getattr()、setattr()以及hasattr()，我们可以直接操作一个对象的状态:
+
+如果试图获取不存在的属性，会抛出AttributeError的错误，可以传入一个default参数，如果属性不存在，就返回默认值：
+
+```python
+class MyObject(object):                        
+    def __init__(self, attr1: int, attr2: str):
+        self.attr1 = attr1                     
+        self.attr2 = attr2                     
+        return None                            
+■■■■                                           
+    def power(self) -> int:                    
+        return self.attr1 * int(self.attr2)    
+                                               
+obj = MyObject(1,"2")                          
+print(hasattr(obj, "attr1")) # True            
+setattr(obj, "attr3", 9)                       
+print(getattr(obj, "attr3")) # 9               
+print(getattr(obj, "attr4", 404))              
+```
+
+通过内置的一系列函数，我们可以对任意一个Python对象进行剖析，拿到其内部的数据。
+
+一个正确的用法的例子如下：
+
+```python
+def readImage(fp):
+    if hasattr(fp, 'read'):
+        return readData(fp)
+    return None
+```
+
+假设我们希望从文件流fp中读取图像，我们首先要判断该fp对象是否存在read方法，如果存在，则该对象是一个流，如果不存在，则无法读取。hasattr()就派上了用场。
+
+请注意，在Python这类动态语言中，根据鸭子类型，有read()方法，不代表该fp对象就是一个文件流，它也可能是网络流，也可能是内存中的一个字节流，但只要read()方法返回的是有效的图像数据，就不影响读取图像的功能。
+
+## 6 实例属性和类属性
+
+Python是动态语言，根据类创建的实例可以任意绑定属性。
+
+给实例绑定属性的方法是通过实例变量，或者通过self变量：
+
+```python
+class Student(object):
+    def __init__(self, name):
+        self.name = name
+
+s = Student('Bob')
+s.score = 90
+```
+
+如果Student类本身需要绑定一个属性呢？可以直接在class中定义属性，这种属性是类属性，归Student类所有：
+
+```python
+class Student(object):
+    name = 'Student'
+```
+实例属性优先级比类属性高，因此，它会屏蔽掉类的同名属性。
+
+```python
+class Student(object):       
+    number = 0               
+    def __init__(self, name):
+        self.__name = name   
+        Student.number += 1  
+        return None          
+                             
+s1 = Student("chunni")       
+s2 = Student("dora")         
+print(Student.number)        
 ```

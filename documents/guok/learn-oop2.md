@@ -1,0 +1,210 @@
+- [1 slots](#1-slots)
+- [2 @property](#2-property)
+- [3 多继承](#3-多继承)
+- [4 定制类](#4-定制类)
+
+## 1 slots
+
+```python
+from types import MethodType                              
+                                                          
+class Student(object):                                    
+    pass                                                  
+                                                          
+s = Student()                                             
+s.name = "chunni" # 给实例绑定一个属性。                  
+print(s.name)                                             
+                                                          
+def set_age(self, age):                                   
+    self.age = age                                        
+    return None                                           
+                                                          
+s.set_age = MethodType(set_age, s) #  # 给实例绑定一个方法
+s.set_age(19)                                             
+print(hasattr(s, "age"))
+```
+
+但是，给一个实例绑定的方法，对另一个实例是不起作用的。
+
+为了给所有实例都绑定方法，可以给class绑定方法：
+
+```python
+Student.set_score = set_score
+```
+
+给class绑定方法后，所有实例均可调用。
+
+**使用 slots**
+
+为了达到限制的目的，Python允许在定义class的时候，定义一个特殊的__slots__变量，来限制该class实例能添加的属性：
+
+```python
+class Student(object):
+    __slots__ = ("name", "age")
+
+s = Student()
+s.name = "Chunni"
+```
+使用__slots__要注意，__slots__定义的属性仅对当前类实例起作用，对继承的子类是不起作用的。
+
+除非在子类中也定义__slots__，这样，子类实例允许定义的属性就是自身的__slots__和父类的__slots__的并集。
+
+## 2 @property
+
+@property广泛应用在类的定义中，可以让调用者写出简短的代码，同时保证对参数进行必要的检查，这样，程序运行时就减少了出错的可能性。
+
+
+```python
+class Student(object):
+    def __init__(self, name: str, age: int):
+        self.__name = name
+        self.__age = age
+        return None
+    
+    def get_name(self)->str:
+        return self.__name
+    
+    def set_name(self, name: str):
+        if not isinstance(name, str):
+            raise ValueError('score must be an str!')
+        else:
+            self.__name = name
+        
+    def get_age(self)->int:
+        return self.__age
+    
+    def set_age(self, age: int):
+        if not isinstance(age, int):
+            raise ValueError('score must be an integer!')
+        if age < 0 or age > 100:
+            raise ValueError('score must between 0 ~ 100!')
+        self.__age = age
+
+s = Student("chunni", 23)
+print(s.get_age(), s.get_name())
+s.set_age(24)
+s.set_name("karl")
+print(s.get_age(), s.get_name())
+```
+
+Python内置的@property装饰器就是负责把一个方法变成属性调用的。
+
+```python
+class Student(object):
+    def __init__(self, name: str, age: int):
+        self.__name = name
+        self.__age = age
+        return None
+
+    @property
+    def name(self)->str:
+        return self.__name
+    
+    @name.setter
+    def name(self, name: str):
+        if not isinstance(name, str):
+            raise ValueError('score must be an str!')
+        else:
+            self.__name = name
+    
+    @property
+    def age(self)->int:
+        return self.__age
+
+
+s = Student("chunni", 23)
+
+print(s.age, s.name)
+# s.age =13 # age 只读
+s.name = "karl"
+print(s.age, s.name)
+```
+
+要特别注意：**属性的方法名不要和实例变量重名。**例如，以下的代码是错误的：
+
+```python
+class Student(object):
+
+    # 方法名称和实例变量均为birth:
+    @property
+    def birth(self):
+        return self.birth
+```
+
+这是因为调用s.birth时，首先转换为方法调用，在执行return self.birth时，又视为访问self的属性，于是又转换为方法调用，造成无限递归，最终导致栈溢出报错RecursionError。
+
+## 3 多继承
+
+```python
+class Bat(Mammal, Flyable):
+    pass
+```
+
+**MixIn**
+
+在设计类的继承关系时，通常，主线都是单一继承下来的，例如，Ostrich继承自Bird。但是，如果需要“混入”额外的功能，通过多重继承就可以实现，比如，让Ostrich除了继承自Bird外，再同时继承Runnable。这种设计通常称之为MixIn。
+
+MixIn的目的就是给一个类增加多个功能，这样，在设计类的时候，我们优先考虑通过多继承来组合多个MixIn的功能，而不是设计多层次的复杂的继承关系。
+
+多继承如果多个类有共同的方法名，调用该方法的时候，会调用第一顺位继承父类的方法。
+
+## 4 定制类
+
+`__len__()` 方法可以让 `len()` 作用于 class 实例。
+
+`__str__()` 方法可以自定义返回给用户看到的字符串。
+
+```python
+class Student(object):
+    def __init__(self, name: str) -> None:
+        self.__name = name
+        return None
+    
+    def __str__(self) -> str:
+        return 'Student object (name: %s)' % self.__name
+
+print(Student("Mike")) # <__main__.Student object at 0x7ff46f1ebdf0>
+# 没有自定义 __str__ 的话，打印： <__main__.Student object at 0x7ff46f1ebdf0>
+```
+
+`__repr__()` 方法可以自定义调试时候看到的字符串。
+
+```python
+class Student(object):
+    def __init__(self, name: str) -> None:
+        self.__name = name
+        return None
+    
+    def __str__(self) -> str:
+        return 'Student object (name: %s)' % self.__name
+    
+    # 通常可以这样写
+    __repr__ = __str__
+```
+
+`__iter__()`、`__next__()`
+
+如果一个类想被用于 `for ... in` 循环，类似list或tuple那样，就必须实现一个__iter__()方法，该方法返回一个迭代对象，然后，Python的for循环就会不断调用该迭代对象的__next__()方法拿到循环的下一个值，直到遇到StopIteration错误时退出循环。
+
+```python
+class Fib(object):
+    def __init__(self):
+        self.a, self.b = 0, 1 # 初始化两个计数器a，b
+
+    def __iter__(self):
+        return self # 实例本身就是迭代对象，故返回自己
+
+    def __next__(self):
+        self.a, self.b = self.b, self.a + self.b # 计算下一个值
+        if self.a > 100000: # 退出循环的条件
+            raise StopIteration()
+        return self.a # 返回下一个值
+
+for i in Fib():
+    print(i)
+```
+
+`__getitem__()`
+
+实现就可以按下标访问数列的任意一项。
+
