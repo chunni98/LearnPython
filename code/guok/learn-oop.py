@@ -143,13 +143,21 @@
 # print(getattr(obj, "attr3")) # 9
 # print(getattr(obj, "attr4", 404))
 
-class Student(object):
-    number = 0
-    def __init__(self, name):
-        self.__name = name
-        Student.number += 1
-        return None
+# class Student(object):
+#     number = 0
+#     def __init__(self, name):
+#         self.__name = name
+#         Student.number += 1
+#         return None
 
-s1 = Student("chunni")
-s2 = Student("dora")
-print(Student.number)
+# s1 = Student("chunni")
+# s2 = Student("dora")
+# print(Student.number)
+def mul(*args: int) -> int:
+    sum = 1
+    for arg in args:
+        sum = sum * arg
+    return sum
+
+l1 = [1,2,3,4,5]
+print(mul(*l1))
