@@ -1,6 +1,5 @@
 # Google Python 开源代码风格指南
 
-
 - [Google Python 开源代码风格指南](#google-python-开源代码风格指南)
   - [语言规范](#语言规范)
     - [pylint](#pylint)
