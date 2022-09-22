@@ -9,23 +9,16 @@
 # \Brief       :
 # \Log         :
 
-# Chain().users('michael').repos
-# /users/michael/repos
 
-class Chain(object):
+# 负责保存数据库表的字段名和字段类型
+class Field(object):
+    def __init__(self, name, column_type) -> None:
+        self.__name = name
+        self.__column_type = column_type
+    
+    def __str__(self) -> str:
+        return "<%s:%s>" % (self.__class__.__name__, self.__name)
 
-    def __init__(self, path=''):
-        self._path = path
-        
-    def __call__(self,user_name=''):
-        return Chain('%s/%s' % (self._path, user_name))
-
-    def __getattr__(self, path):
-        return Chain('%s/%s' % (self._path, path))
-
-    def __str__(self):
-        return self._path
-
-    __repr__ = __str__
-
-print(Chain().users('michael').repos)
+class StringField(Field):
+    def __init__(self) -> None:
+        pass
