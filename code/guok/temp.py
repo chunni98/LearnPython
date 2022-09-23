@@ -9,16 +9,14 @@
 # \Brief       :
 # \Log         :
 
+class MyMetaclass(type):
+    def __new__(cls, name: str, bases: tuple, dct: dict) :
+        obj = super().__new__(cls, name, bases, dct)
+        return obj
 
-# 负责保存数据库表的字段名和字段类型
-class Field(object):
-    def __init__(self, name, column_type) -> None:
-        self.__name = name
-        self.__column_type = column_type
-    
-    def __str__(self) -> str:
-        return "<%s:%s>" % (self.__class__.__name__, self.__name)
+class Myclass(metaclass = MyMetaclass):
+    pass
 
-class StringField(Field):
-    def __init__(self) -> None:
-        pass
+myclass = Myclass()
+print(myclass.__class__)
+print(myclass.__class__.__class__) # <class '__main__.MyMetaclass'>
